@@ -5,19 +5,22 @@ There are a bunch of configurable variables
 
 from icalendar import Calendar, Event
 from typing import Dict, List  # NOQA
+from platform import uname
+from uuid import uuid4
 import csv
+import datetime
 
 
 DEFAULT_CONFIG = {
-    'HEADER_ROWS_TO_SKIP':  0,
+        'HEADER_ROWS_TO_SKIP':  0,
 
-    # The variables below refer to the column indexes in the CSV
-    'CSV_NAME': 0,
-    'CSV_START_DATE': 1,
-    'CSV_END_DATE': 1,
-    'CSV_DESCRIPTION': 2,
-    'CSV_LOCATION': 3,
-}
+        # The variables below refer to the column indexes in the CSV
+        'CSV_NAME': 0,
+        'CSV_START_DATE': 1,
+        'CSV_END_DATE': 1,
+        'CSV_DESCRIPTION': 2,
+        'CSV_LOCATION': 3,
+        }
 
 
 class Convert():
@@ -57,6 +60,8 @@ class Convert():
         """ Make iCal entries """
         csv_configs = self._generate_configs_from_default(csv_configs)
         self.cal = Calendar()
+        self.cal.add('version', '2.0')
+        self.cal.add('prodid', 'Custom Rapla to csv to ics converter')
         for row in self.csv_data:
             event = Event()
             event.add('summary', row[csv_configs['CSV_NAME']])
@@ -64,6 +69,8 @@ class Convert():
             event.add('dtend', row[csv_configs['CSV_END_DATE']])
             event.add('description', row[csv_configs['CSV_DESCRIPTION']])
             event.add('location', row[csv_configs['CSV_LOCATION']])
+            event.add('uid', uuid4().hex + '@'+ uname()[1])
+            event.add('dtstamp', datetime.datetime.now())
             self.cal.add_component(event)
         return self.cal
 
@@ -73,12 +80,12 @@ class Convert():
             if event.name != 'VEVENT':
                 continue
             row = [
-                event.get('SUMMARY'),
-                event.get('DTSTART').dt,
-                event.get('DTEND').dt,
-                event.get('DESCRIPTION'),
-                event.get('LOCATION'),
-            ]
+                    event.get('SUMMARY'),
+                    event.get('DTSTART').dt,
+                    event.get('DTEND').dt,
+                    event.get('DESCRIPTION'),
+                    event.get('LOCATION'),
+                    ]
             row = [str(x) for x in row]
             self.csv_data.append(row)
 
