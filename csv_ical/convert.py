@@ -69,10 +69,13 @@ class Convert():
             event.add('dtend', row[csv_configs['CSV_END_DATE']])
             event.add('description', row[csv_configs['CSV_DESCRIPTION']])
             event.add('location', row[csv_configs['CSV_LOCATION']])
-            event.add('uid', base64encode(row[csv_configs['CSV_START_DATE']] +row[csv_configs['CSV_END_DATE']] + row[csv_configs['CSV_DESCRIPTION']] + '@' + uname()[1]))
+            event.add('uid', b64encode((row[csv_configs['CSV_START_DATE']].strftime("%Y-%m-%d %H:%M") +
+                row[csv_configs['CSV_END_DATE']].strftime("%Y-%m-%d %H:%M") +
+                row[csv_configs['CSV_DESCRIPTION']] + '@' + uname()[1]).encode('utf-8')))
             event.add('dtstamp', datetime.datetime.now())
             self.cal.add_component(event)
-            return self.cal
+
+        return self.cal
 
     def make_csv(self):  # type: () -> None
         """ Make CSV """
