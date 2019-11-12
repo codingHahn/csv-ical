@@ -74,30 +74,30 @@ class Convert():
             self.cal.add_component(event)
             return self.cal
 
-            make_csv(self):  # type: () -> None
-            """ Make CSV """
-            for event in self.cal.subcomponents:
-                if event.name != 'VEVENT':
-                    continue
-            row = [
-                    event.get('SUMMARY'),
-                    event.get('DTSTART').dt,
-                    event.get('DTEND').dt,
-                    event.get('DESCRIPTION'),
-                    event.get('LOCATION'),
-                    ]
-            row = [str(x) for x in row]
-            self.csv_data.append(row)
+    def make_csv(self):  # type: () -> None
+        """ Make CSV """
+        for event in self.cal.subcomponents:
+            if event.name != 'VEVENT':
+                continue
+        row = [
+                event.get('SUMMARY'),
+                event.get('DTSTART').dt,
+                event.get('DTEND').dt,
+                event.get('DESCRIPTION'),
+                event.get('LOCATION'),
+                ]
+        row = [str(x) for x in row]
+        self.csv_data.append(row)
 
-            def save_ical(self, ical_location):  # type: (str) -> None
-                """ Save the calendar instance to a file """
-            data = self.cal.to_ical()
-            with open(ical_location, 'wb') as ical_file:
-                ical_file.write(data)
+    def save_ical(self, ical_location):  # type: (str) -> None
+        """ Save the calendar instance to a file """
+        data = self.cal.to_ical()
+        with open(ical_location, 'wb') as ical_file:
+            ical_file.write(data)
 
-            def save_csv(self, csv_location):  # type: (str) -> None
-                """ Save the csv to a file """
-            with open(csv_location, 'w', encoding='utf-8') as csv_handle:
-                writer = csv.writer(csv_handle)
-            for row in self.csv_data:
-                writer.writerow([r.strip() for r in row])
+    def save_csv(self, csv_location):  # type: (str) -> None
+        """ Save the csv to a file """
+        with open(csv_location, 'w', encoding='utf-8') as csv_handle:
+            writer = csv.writer(csv_handle)
+        for row in self.csv_data:
+            writer.writerow([r.strip() for r in row])
